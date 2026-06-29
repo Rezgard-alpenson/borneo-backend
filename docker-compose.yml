@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # 1. Kontainer untuk Server Backend Anda
+  api_borneo:
+    build: .
+    container_name: borneo_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - mqtt_broker
+    restart: always
+
+  # 2. Kontainer untuk Jalur IoT (Eclipse Mosquitto)
+  mqtt_broker:
+    image: eclipse-mosquitto:latest
+    container_name: borneo_mosquitto
+    ports:
+      - "1883:1883" # Port standar MQTT
+      - "9001:9001" # Port WebSockets
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: always
