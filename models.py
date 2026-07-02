@@ -9,6 +9,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, index=True)
+    email = Column(String(100), unique=True, index=True, nullable=True)
     password_hash = Column(String(255)) 
     role = Column(String(20), default="petani")
     is_active = Column(Boolean, default=True)
@@ -24,7 +25,8 @@ class Zone(Base):
     nama_zona = Column(String(50), nullable=False) # Contoh: "Zona A - Tomat"
     deskripsi = Column(String(255), nullable=True)
     
-    # --- LOGIKA KENDALI (HASIL REVISI SEMPRO) ---
+    # --- LOGIKA KENDALI & IDENTITAS ALAT (HASIL REVISI SEMPRO) ---
+    mac_address = Column(String(50), nullable=True) # MAC Address atau ID Unik ESP32 Ican
     batas_bawah = Column(Float, default=40.0) # Pompa ON jika kelembapan di bawah ini
     batas_atas = Column(Float, default=80.0)  # Pompa OFF jika kelembapan di atas ini
 

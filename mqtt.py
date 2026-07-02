@@ -1,11 +1,15 @@
+import os
 import paho.mqtt.client as mqtt
 import json
+from dotenv import load_dotenv
 from database import SessionLocal
 import models
 
-# 1. Konfigurasi Broker
-BROKER_ADDRESS = "mqtt_broker" # Nanti Faidil akan mengubah ini menjadi IP VPS Wicida
-PORT = 1883
+load_dotenv()
+
+# 1. Konfigurasi Broker (Mengambil dari .env atau default ke mqtt_broker jika di dalam Docker)
+BROKER_ADDRESS = os.getenv("MQTT_BROKER_IP", "mqtt_broker")
+PORT = int(os.getenv("MQTT_PORT", 1883))
 CLIENT_ID = "Borneo_Backend_Server"
 
 # 2. Inisialisasi Klien MQTT (Menggunakan versi API terbaru)

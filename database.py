@@ -1,14 +1,13 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
 
 # 1. Membaca isi file .env
 load_dotenv()
 
-# 2. Mengambil alamat database (DB_URL) dari .env
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:@host.docker.internal/db_borneo"
+# 2. Mengambil alamat database (DB_URL) dari .env (default ke host.docker.internal jika tidak ditemukan)
+SQLALCHEMY_DATABASE_URL = os.getenv("DB_URL", "mysql+pymysql://root:@host.docker.internal:3306/db_borneo")
 
 # 3. Membuat "Mesin Utama" untuk terhubung ke MySQL
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
