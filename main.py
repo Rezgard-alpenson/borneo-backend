@@ -235,6 +235,11 @@ def get_latest_sensor_data(zone_id: int, db: Session = Depends(get_db), current_
     if not data: raise HTTPException(status_code=404, detail="Data tidak ditemukan")
     return data
 
+@app.get("/api/zones/{zone_id}/sensor/history")
+def get_sensor_history(zone_id: int, limit: int = 20, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    records = db.query(models.SensorData).filter(models.SensorData.zone_id == zone_id).order_by(models.SensorData.waktu_rekam.desc()).limit(limit).all()
+    return list(reversed(records))
+
 @app.get("/api/zones/{zone_id}/pump/logs")
 def get_pump_logs_history(zone_id: int, limit: int = 10, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     return db.query(models.PumpLog).filter(models.PumpLog.zone_id == zone_id).order_by(models.PumpLog.waktu_kejadian.desc()).limit(limit).all()
