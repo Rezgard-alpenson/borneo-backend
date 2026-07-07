@@ -16,10 +16,6 @@ ACCESS_TOKEN_EXPIRE_DAYS = 7  # Token berlaku 7 hari agar petani tidak perlu log
 
 security = HTTPBearer()
 
-# Dependency database untuk auth (Menggunakan get_db)
-def get_db_auth():
-    return get_db()
-
 # --- 2. PEMBUATAN TOKEN (ENCODE) ---
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """

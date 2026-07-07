@@ -10,7 +10,7 @@ from typing import Optional
 from sqlalchemy.orm import Session 
 from sqlalchemy import text
 from passlib.context import CryptContext
-from database import engine, SessionLocal
+from database import engine, SessionLocal, get_db
 import models
 import auth
 
@@ -21,14 +21,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_password_hash(password):
     return pwd_context.hash(password)
-
-# 2. Dependency Database
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # 3. LOGIKA PENYEMAIAN DATA & INISIALISASI IOT
 @asynccontextmanager
