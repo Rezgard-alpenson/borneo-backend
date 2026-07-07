@@ -212,7 +212,7 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db), current_adm
 
 @app.post("/api/users/change-password")
 def change_user_password(req: PasswordChange, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    user_in_db = db.query(models.User).filter(models.User.id == current_user.id).first()
+    user_in_db = db.query(models.User).filter((models.User.id == current_user.id) | (models.User.username == current_user.username)).first()
     if not user_in_db:
         raise HTTPException(status_code=404, detail="Pengguna tidak ditemukan di database.")
 

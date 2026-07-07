@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import SessionLocal, get_db
 import models
 
 # --- 1. KONFIGURASI RAHSIA JWT ---
@@ -16,13 +16,9 @@ ACCESS_TOKEN_EXPIRE_DAYS = 7  # Token berlaku 7 hari agar petani tidak perlu log
 
 security = HTTPBearer()
 
-# Dependency database untuk auth
+# Dependency database untuk auth (Menggunakan get_db)
 def get_db_auth():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    return get_db()
 
 # --- 2. PEMBUATAN TOKEN (ENCODE) ---
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -43,7 +39,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 # --- 3. SATPAM PELADEN: VERIFIKASI IDENTITAS (GET CURRENT USER) ---
 def get_current_user(
     auth_credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db_auth)
+    db: Session = Depends(get_db)
 ) -> models.User:
     """
     Mengekstrak dan memvalidasi token Bearer dari HTTP header.
