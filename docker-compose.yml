@@ -9,6 +9,10 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      - DB_URL=mysql+pymysql://root:@host.docker.internal:3306/db_borneo
+      - MQTT_BROKER_IP=mqtt_broker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - mqtt_broker
     restart: always
