@@ -50,9 +50,21 @@ async def lifespan(app: FastAPI):
         except Exception:
             db.rollback()
 
-        # Cek apakah zona pertama sudah punya MAC address
+        # Cek apakah zona pertama sudah ada di database
         zona1 = db.query(models.Zone).filter(models.Zone.id == 1).first()
-        if zona1 and not zona1.mac_address:
+        if not zona1:
+            zona1 = models.Zone(
+                id=1,
+                nama_zona="Zona 1 (Kebun A)",
+                deskripsi="Area penyiraman kebun utama",
+                mac_address="ESP32-ZONA-01",
+                batas_bawah=40.0,
+                batas_atas=80.0
+            )
+            db.add(zona1)
+            db.commit()
+            print(">>> STATUS DB: Zona 1 BERHASIL diciptakan secara otomatis! <<<")
+        elif not zona1.mac_address:
             zona1.mac_address = "ESP32-ZONA-01"
             db.commit()
 
