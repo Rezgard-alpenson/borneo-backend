@@ -212,26 +212,22 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db), current_adm
 
 @app.post("/api/users/change-password")
 def change_user_password(req: PasswordChange, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    user_in_db = db.query(models.User).filter((models.User.id == current_user.id) | (models.User.username == current_user.username)).first()
-    if not user_in_db:
-        raise HTTPException(status_code=404, detail="Pengguna tidak ditemukan di database.")
-
     is_valid = False
     try:
-        if pwd_context.verify(req.old_password, user_in_db.password_hash):
+        if pwd_context.verify(req.old_password, current_user.password_hash):
             is_valid = True
     except Exception:
         pass
-    if not is_valid and user_in_db.password_hash == req.old_password:
+    if not is_valid and current_user.password_hash == req.old_password:
         is_valid = True
 
     if not is_valid:
         raise HTTPException(status_code=400, detail="Password lama salah! Mohon periksa kembali password lama Anda.")
 
-    user_in_db.password_hash = get_password_hash(req.new_password)
+    current_user.password_hash = get_password_hash(req.new_password)
     db.commit()
-    db.refresh(user_in_db)
-    print(f"\n>>> [GANTI PASSWORD SUKSES] Password untuk user '{user_in_db.username}' telah diperbarui di database.")
+    db.refresh(current_user)
+    print(f"\n>>> [GANTI PASSWORD SUKSES] Password untuk user '{current_user.username}' telah diperbarui di database.")
     return {"message": "Password berhasil diperbarui secara rahasia!"}
 
 @app.post("/api/pump/control")
