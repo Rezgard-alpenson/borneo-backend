@@ -12,13 +12,16 @@ services:
     restart: always
 
   mqtt_broker:
-    image: eclipse-mosquitto:latest
+    build: ./mosquitto
     container_name: borneo_mosquitto
     ports:
       - "1883:1883"
       - "9001:9001"
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    environment:
+      - MOSQUITTO_USERNAME=${MQTT_USERNAME:-borneo_backend}
+      - MOSQUITTO_PASSWORD=${MQTT_PASSWORD:-""}
     restart: always
 
   app:
@@ -30,6 +33,8 @@ services:
       - PYTHONUNBUFFERED=1
       - DATABASE_URL=mysql+pymysql://root:@host.docker.internal:3306/db_borneo
       - MQTT_BROKER=mqtt_broker
+      - MQTT_USERNAME=${MQTT_USERNAME:-borneo_backend}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:?MQTT_PASSWORD is required. Set it in .env or docker-compose override.}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

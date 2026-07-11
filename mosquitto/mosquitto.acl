@@ -1,0 +1,8 @@
+# Backend server full access
+user borneo_backend
+topic readwrite borneo/#
+
+# Devices - restricted to their own zone topics
+# %u will be replaced with the connecting client's username
+pattern write borneo/zona-%u/sensor
+pattern read borneo/zona-%u/pompa

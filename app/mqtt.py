@@ -10,6 +10,8 @@ from app.services import zone_service, pump_log_service
 
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=settings.mqtt_client_id)
 
+if settings.mqtt_username and settings.mqtt_password:
+    mqtt_client.username_pw_set(settings.mqtt_username, settings.mqtt_password)
 
 def _catat_riwayat_pompa(db, zone_id: int, status: str, pemicu: str):
     pump_log_service.create_pump_log(db, zone_id, status, pemicu)
