@@ -51,10 +51,25 @@ alembic upgrade head
 
 ## Struktur
 
-| File | Fungsi |
-|---|---|
-| `main.py` | Entry point FastAPI |
-| `database.py` | Koneksi MySQL via SQLAlchemy |
-| `models.py` | Definisi tabel database |
-| `mqtt.py` | Koneksi & handler MQTT |
-| `alembic/` | Konfigurasi migration |
+```text
+.
+├── main.py            # Entry point FastAPI
+├── alembic.ini        # Konfigurasi Alembic migration
+├── docker-compose.yml # Setup service via Docker Compose
+├── Dockerfile         # Docker image definition
+├── requirements.txt   # Daftar dependency Python
+├── app/               # Source code utama aplikasi
+│   ├── main.py        # Inisialisasi app dan routing utama
+│   ├── auth.py        # Logika autentikasi
+│   ├── middleware.py  # Middleware request/response
+│   ├── mqtt.py        # Koneksi dan handler MQTT
+│   ├── schemas.py     # Pydantic schema
+│   ├── seed.py        # Data awal / seeding
+│   ├── config/        # Konfigurasi aplikasi
+│   ├── models/        # Model database SQLAlchemy
+│   ├── routes/        # Endpoint API
+│   └── services/      # Business logic
+├── alembic/           # Folder migration Alembic
+│   └── versions/      # File-file migration
+└── mosquitto/         # Konfigurasi broker MQTT
+```
