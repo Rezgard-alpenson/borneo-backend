@@ -1,29 +1,41 @@
-version: '3.8'
-
 services:
-  # 1. Kontainer untuk Server Backend Anda
-  api_borneo:
+  mysql:
+    image: mysql:8.0
+    container_name: borneo_mysql
+    environment:
+      MYSQL_DATABASE: db_borneo
+      MYSQL_ROOT_PASSWORD: RizkySusu
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  mqtt_broker:
+    image: eclipse-mosquitto:latest
+    container_name: borneo_mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: always
+
+  app:
     build: .
     container_name: borneo_backend
     ports:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - DB_URL=mysql+pymysql://root:@host.docker.internal:3306/db_borneo
-      - MQTT_BROKER_IP=mqtt_broker
+      - DATABASE_URL=mysql+pymysql://root:@host.docker.internal:3306/db_borneo
+      - MQTT_BROKER=mqtt_broker
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
+      - mysql
       - mqtt_broker
     restart: always
 
-  # 2. Kontainer untuk Jalur IoT (Eclipse Mosquitto)
-  mqtt_broker:
-    image: eclipse-mosquitto:latest
-    container_name: borneo_mosquitto
-    ports:
-      - "1883:1883" # Port standar MQTT
-      - "9001:9001" # Port WebSockets
-    volumes:
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
-    restart: always
+volumes:
+  mysql_data:
