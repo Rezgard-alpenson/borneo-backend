@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
+      contents: write
       pages: write
       id-token: write
     
@@ -42,7 +43,10 @@ jobs:
           </body>
           </html>
           EOF
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+          path: ./docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
