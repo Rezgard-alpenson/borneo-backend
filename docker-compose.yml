@@ -31,7 +31,7 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - DATABASE_URL=mysql+pymysql://root:@host.docker.internal:3306/db_borneo
+      - DATABASE_URL=mysql+pymysql://root:RizkySusu@mysql:3306/db_borneo
       - MQTT_BROKER=mqtt_broker
       - MQTT_USERNAME=${MQTT_USERNAME:-borneo_backend}
       - MQTT_PASSWORD=${MQTT_PASSWORD:?MQTT_PASSWORD is required. Set it in .env or docker-compose override.}
