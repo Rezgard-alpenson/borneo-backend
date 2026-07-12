@@ -1,10 +1,12 @@
 import json
+import os
 import sys
 
 from app.main import app
 
 
 def generate_openapi(output_path: str = "docs/openapi.json"):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(app.openapi(), f, indent=2, ensure_ascii=False)
     print(f">>> OpenAPI spec berhasil digenerate ke {output_path} <<<")
