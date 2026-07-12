@@ -2,15 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
-from app.schemas import UserCreate, PasswordChange
+from app.schemas import BaseResponse, UserCreate, PasswordChange, UserResponse, MessageResponse
 from app import models
 from app.auth import get_current_user, require_admin_role
 from app.services import user_service
+from app.utils.response import ok
 
 router = APIRouter(tags=["Users"])
 
 
-@router.post("/api/users/create")
+@router.post("/api/users/create", response_model=BaseResponse[UserResponse])
 def create_new_user(
     user: UserCreate,
     db: Session = Depends(get_db),
@@ -32,10 +33,10 @@ def create_new_user(
     )
     log_aksi = f"Mendaftarkan akun baru dengan username: {user.username} (Email: {user.email or 'Tidak ada'})"
     user_service.log_action(db, user.pembuat_id, log_aksi)
-    return {"message": "Akun berhasil dibuat", "user_id": db_user.id}
+    return ok(data=UserResponse.model_validate(db_user), message="Akun berhasil dibuat")
 
 
-@router.post("/api/users/change-password")
+@router.post("/api/users/change-password", response_model=BaseResponse[MessageResponse])
 def change_user_password(
     req: PasswordChange,
     db: Session = Depends(get_db),
@@ -49,4 +50,4 @@ def change_user_password(
         raise HTTPException(status_code=400, detail="Password lama salah! Mohon periksa kembali password lama Anda.")
 
     user_service.change_password(db, user_in_db, req.new_password)
-    return {"message": "Password berhasil diperbarui secara rahasia!"}
+    return ok(data=MessageResponse(message="Password berhasil diperbarui secara rahasia!"))

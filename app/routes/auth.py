@@ -2,14 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
-from app.schemas import LoginRequest
+from app.schemas import BaseResponse, LoginRequest, LoginResponse
 from app import auth as auth_module
 from app.services import user_service
+from app.utils.response import ok
 
 router = APIRouter(tags=["Authentication"])
 
 
-@router.post("/api/login")
+@router.post("/api/login", response_model=BaseResponse[LoginResponse])
 def login(req: LoginRequest, db: Session = Depends(get_db)):
     username = req.username.strip()
     password = req.password.strip()
@@ -24,11 +25,12 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     access_token = auth_module.create_access_token(
         data={"sub": user.username, "role": user.role, "user_id": user.id}
     )
-    return {
-        "message": "Login berhasil!",
-        "access_token": access_token,
-        "token_type": "bearer",
-        "user_id": user.id,
-        "role": user.role,
-        "username": user.username,
-    }
+    return ok(
+        data=LoginResponse(
+            access_token=access_token,
+            user_id=user.id,
+            role=user.role,
+            username=user.username,
+        ),
+        message="Login berhasil!",
+    )
